@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{4EBDCCA3-EA64-ECF3-86CE-4D2F2C286820}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Tools/PrefabDrawer/Editor/PrefabDrawerSceneView.cs">
+    <Files>
+      <File FileName="Assets/Scripts/PrefabDrawer/PrefabDrawer.cs" Line="13" Column="2" />
+      <File FileName="Assets/Tools/PrefabDrawer/Editor/PrefabDrawerSceneView.cs" Line="21" Column="21" />
+      <File FileName="Assets/Tools/PrefabCenter/Editor/PrefabCenter.cs" Line="5" Column="1" />
+      <File FileName="Assets/Scripts/PrefabCenter/PrefabCenterItem.cs" Line="20" Column="2" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

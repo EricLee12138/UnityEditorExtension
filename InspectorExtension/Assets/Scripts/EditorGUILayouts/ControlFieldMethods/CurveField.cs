@@ -1,0 +1,5 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace InspectorExtension.EditorGUILayouts {	public class CurveField : MonoBehaviour {		[SerializeField]		AnimationCurve _curveFirst = AnimationCurve.Linear (0, 0, 10, 10);		[SerializeField]		AnimationCurve _curveSecond = AnimationCurve.Linear (0, 0, 10, 10);		[SerializeField]		AnimationCurve _curveThird = AnimationCurve.Linear (0, 0, 10, 10);		[SerializeField]		AnimationCurve _curveForth = AnimationCurve.Linear (0, 0, 10, 10);		public AnimationCurve CurveFirst {			get { return _curveFirst; }			set { _curveFirst = value; }		}		public AnimationCurve CurveSecond {			get { return _curveSecond; }			set { _curveSecond = value; }		}		public AnimationCurve CurveThird {			get { return _curveThird; }			set { _curveThird = value; }		}		public AnimationCurve CurveForth {			get { return _curveForth; }			set { _curveForth = value; }		}	}}

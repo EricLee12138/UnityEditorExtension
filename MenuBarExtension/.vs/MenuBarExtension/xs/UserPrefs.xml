@@ -1,0 +1,16 @@
+﻿<Properties StartupConfiguration="{52DB9F2B-4B5F-3B7F-8BBA-D6B065C03772}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Tools/MenuItems/Editor/PriorityItems.cs">
+    <Files>
+      <File FileName="Assets/Tools/MenuItems/Editor/PriorityItems.cs" Line="6" Column="37" />
+      <File FileName="Assets/Tools/MenuItems/Editor/NewLevelScene.cs" Line="14" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp-Editor PreferredExecutionTarget="Unity.Editor" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

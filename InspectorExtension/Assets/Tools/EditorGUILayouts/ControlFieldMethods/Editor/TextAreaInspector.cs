@@ -1,0 +1,1 @@
+﻿using UnityEditor;namespace InspectorExtension.EditorGUILayouts {	[CustomEditor (typeof (TextArea))]	public class TextAreaInspector : Editor {		TextArea _target;		void OnEnable () {			_target = (TextArea)target;		}		public override void OnInspectorGUI () {			_target.Text = EditorGUILayout.TextArea (_target.Text);		}	}}

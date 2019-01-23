@@ -1,0 +1,5 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace InspectorExtension.EditorGUILayouts {	public class VectorField : MonoBehaviour {		[SerializeField]		Vector2 _vec2 = new Vector2 (15.5f, 10.0f);		[SerializeField]		Vector2Int _vec2Int = new Vector2Int (5, 5);		[SerializeField]		Vector3 _vec3 = new Vector3 (15.5f, 10.0f, 20.5f);		[SerializeField]		Vector3Int _vec3Int = new Vector3Int (5, 5, -10);		[SerializeField]		Vector4 _vec4 = new Vector4 (15.5f, 10.0f, 20.5f, -7.5f);		public Vector4 Vec2 {			get { return _vec2; }			set { _vec2 = value; }		}		public Vector2Int Vec2Int {			get { return _vec2Int; }			set { _vec2Int = value; }		}		public Vector3 Vec3 {			get { return _vec3; }			set { _vec3 = value; }		}		public Vector3Int Vec3Int {			get { return _vec3Int; }			set { _vec3Int = value; }		}		public Vector4 Vec4 {			get { return _vec4; }			set { _vec2 = value; }		}	}}

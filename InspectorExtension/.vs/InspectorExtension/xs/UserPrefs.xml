@@ -1,0 +1,34 @@
+﻿<Properties StartupConfiguration="{BCEB3B7A-5439-392C-40F7-1466863680C6}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/Slider.cs">
+    <Files>
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/DropdownButton.cs" Line="5" Column="11" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/MaskField.cs" Line="5" Column="10" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/DelayedField.cs" Line="6" Column="45" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/InspectorTitleBar.cs" Line="7" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/BoundsIntField.cs" Line="31" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/ObjectField.cs" Line="24" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/ColorField.cs" Line="39" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/CurveField.cs" Line="39" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/LabelField.cs" Line="15" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/LayerTagField.cs" Line="6" Column="46" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/Toggle.cs" Line="21" Column="4" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/TextArea.cs" Line="17" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/HelpBox.cs" Line="7" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/Popup.cs" Line="39" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/CommonField.cs" Line="39" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/Space.cs" Line="7" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/PasswordField.cs" Line="15" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/Foldout.cs" Line="15" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/EnumFlagsField.cs" Line="37" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/BoundsField.cs" Line="31" Column="2" />
+      <File FileName="Assets/Scripts/EditorGUILayouts/ControlFieldMethods/Slider.cs" Line="14" Column="28" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
