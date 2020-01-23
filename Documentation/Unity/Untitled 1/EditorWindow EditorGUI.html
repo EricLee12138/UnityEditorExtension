@@ -1,0 +1,572 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>EditorWindow 和 EditorGUI</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="9bb6a439-b19a-4161-a47c-d5d2596fa60f" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">📋</span></div><h1 class="page-title">EditorWindow 和 EditorGUI</h1></header><div class="page-body"><h1 id="d49671bf-c17f-4153-8522-b1bf6168b129" class="">EditorWindow</h1><p id="76c9c046-c4c0-4e6d-bd95-038abe41eed4" class="">所有对编辑器窗口的基本操作都来自于类 <code>EditorWindow</code> 提供的接口。以下是对 Unity 官方文档的摘要：</p><div id="bfcf1db5-4991-4546-9721-18674c28911b" class="collection-content"><h4 class="collection-title">  EditorWindow</h4><table class="collection-content"><thead><tr><th>说明</th><th>类型</th><th>使用方法</th></tr></thead><tbody><tr id="364b71dc-691b-41c6-abaa-c11013a4b9fa"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled.html">当前拥有焦点/在鼠标下方的窗口</a></td><td class="cell-OnUv"><span class="selected-value">静态属性</span></td><td class="cell-ceU`"><code>focusedWindow</code> <code>mouseOverWindow</code></td></tr><tr id="b5e29341-3b50-4445-afb2-5db2357e8b77"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%201.html">是否在场景变化时自动重绘窗口</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>autoRepaintOnSceneChange</code></td></tr><tr id="80026d8a-5420-46de-8190-6a1b25d8358e"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%202.html">窗口的基本性质，是否最大化、最大尺寸、最小尺寸、位置、标题</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>maximized</code> <code>maxSize</code> <code>minSize</code> <code>position</code> <code>titleContent</code></td></tr><tr id="c740757d-8e8f-41fb-addc-d031d598b803"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/MouseEnterWindow%20MouseLeaveWindow%20Mousemove.html">是否接收 MouseEnterWindow, MouseLeaveWindow, Mousemove 消息</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>wantsMouseEnterLeaveWindow</code>  <code>wantsMouseMove</code></td></tr><tr id="f9a008db-bed7-4705-b6a6-ba79f9b9c9ca"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%203.html">开始/结束弹出窗口的绘制 </a></td><td class="cell-OnUv"><span class="selected-value">公有方法</span></td><td class="cell-ceU`"><code>BeginWindows</code> <code>EndWindows</code></td></tr><tr id="0f1b5bf1-b1cf-42f2-b5c8-71848c26b655"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%204.html">使某个窗口关闭/拥有焦点/显示/重绘</a></td><td class="cell-OnUv"><span class="selected-value">公有方法</span></td><td class="cell-ceU`"><code>Close</code> <code>Focus</code> <code>Show</code> <code>Repaint</code></td></tr><tr id="99c8791b-7fb5-437b-a924-1379312ec99c"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%205.html">给某个窗口发出一个消息</a></td><td class="cell-OnUv"><span class="selected-value">公有方法</span></td><td class="cell-ceU`"><code>SendEvent</code></td></tr><tr id="20679fb4-31be-4cbf-9125-9c8607719e27"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%206.html">在一个窗口中显示/移除通知</a></td><td class="cell-OnUv"><span class="selected-value">公有方法</span></td><td class="cell-ceU`"><code>ShowNotification</code> <code>RemoveNotification</code></td></tr><tr id="94cdfd57-3a3b-42e3-a4e9-aafc3dfede18"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%207.html">将一个窗口显示为下拉窗口/辅助窗口/弹出窗口/浮动实用窗口的形式</a></td><td class="cell-OnUv"><span class="selected-value">公有方法</span></td><td class="cell-ceU`"><code>ShowAsDropDown</code> <code>ShowAuxWindow</code>  <code>ShowPopup</code> <code>ShowUtility</code></td></tr><tr id="74e46ddd-54c5-47a8-829e-fe9c32b13835"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%208.html">将焦点放到某个打开的窗口上</a></td><td class="cell-OnUv"><span class="selected-value">静态方法</span></td><td class="cell-ceU`"><code>FocusWindowIfItsOpen</code></td></tr><tr id="a4fa83a0-7ba0-4239-a511-e35728cd3fed"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%209.html">返回窗口，不存在则创建新的窗口</a></td><td class="cell-OnUv"><span class="selected-value">静态方法</span></td><td class="cell-ceU`"><code>GetWindow</code> <code>GetWindowWithRect</code></td></tr><tr id="08facc40-508b-489f-8f0d-e15bb3422844"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%2010.html">窗口首次打开/更新时调用</a></td><td class="cell-OnUv"><span class="selected-value">消息</span></td><td class="cell-ceU`"><code>Awake</code> <code>Update</code></td></tr><tr id="d466e62f-ad24-4d10-929f-f8bd7ed2ff31"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Untitled%2011.html">窗口关闭/获得焦点/失去焦点时调用</a></td><td class="cell-OnUv"><span class="selected-value">消息</span></td><td class="cell-ceU`"><code>OnDestroy</code> <code>OnFocus</code> <code>OnLostFocus</code></td></tr><tr id="8e5a7db0-62de-4320-83dd-70444d7ecd03"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/GUI.html">绘制窗口 GUI 时调用</a></td><td class="cell-OnUv"><span class="selected-value">消息</span></td><td class="cell-ceU`"><code>OnGUI</code></td></tr><tr id="54d23661-ad8c-40ce-b0a6-29e6470762f4"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorWindow/Hierarchy%20Inspector%20Project.html">Hierarchy 视图/ Inspector 视图/ Project 视图/被选物体发生变化时调用</a></td><td class="cell-OnUv"><span class="selected-value">消息</span></td><td class="cell-ceU`"><code>OnHierarchyChange</code> <code>OnInspectorUpdate</code>  <code>OnProjectChange</code> <code>OnSelectionChange</code></td></tr></tbody></table></div><p id="67c9a2a0-4d13-436d-957a-37e96a795b20" class="">除此之外， <code>EditorWindow</code> 继承于 <code>ScriptableObject</code> 类，所以也包含一些继承的基本属性和方法，这里不做赘述。</p><p id="6c988b5e-cf83-4937-8dd2-1af3ea36a156" class="">之后将会详细举例说明上述 <code>EditorWindow</code> 类中的常用属性、方法。</p><h1 id="afe2a20f-176c-4e6c-aba4-f68d67bd30a9" class="">EditorGUI</h1><p id="f502597a-e8ec-4866-a3e9-9d4bec0a00a2" class="">之前已经简单介绍过 <code>EditorGUI</code> 更适用于新建的编辑器窗口。相比 <code>EditorGUILayout</code> ， <code>EditorGUI</code> 包含大量类似的方法，只需额外提供一个指定的绘制位置和尺寸。在实际使用过程中并不需要明确区分<code>EditorGUILayout</code> 和 <code>EditorGUI</code> 的优劣，依照情况灵活切换使用即可。</p><p id="256099ff-24e0-4873-b5e7-c293ba4f199e" class="">以下列举了 <code>EditorGUI</code> 中特有的方法：</p><div id="6c554e74-cac1-4148-ad45-395534f8f703" class="collection-content"><h4 class="collection-title">EditorGUI     </h4><table class="collection-content"><thead><tr><th>Name</th><th>示例程序</th><th>说明</th></tr></thead><tbody><tr id="a30ab162-b27e-41e2-b409-3e455e88f0a8"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/BeginChangeCheck%20EndChangeCheck.html">BeginChangeCheck,
+EndChangeCheck</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">包含的区域将会自动检查是否有数值变化</td></tr><tr id="a538cc9f-00fd-4f32-becc-844fceb96441"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/BeginDisabledGroup%20EndDisabledGroup.html">BeginDisabledGroup,
+EndDisabledGroup</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">包含的区域可以被禁用</td></tr><tr id="93d71335-3616-460e-abbf-73bb91c658c7"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/BeginProperty%20EndProperty.html">BeginProperty,
+EndProperty</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0"></td></tr><tr id="1f643b8e-2ae0-4b7b-ba4e-e517a7715098"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/CanCacheInspectorGUI.html">CanCacheInspectorGUI</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">获取某个 <code>SerializedProperty</code> 的 Inspector GUI 是否可以被缓冲</td></tr><tr id="0f1ae4fc-1669-4d7a-a590-ee7644a3eb99"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/DrawPreviewTexture%20DrawRect%20DrawTextureAlpha.html">DrawPreviewTexture,
+DrawRect,
+DrawTextureAlpha</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">绘制一个由预览贴图/普通颜色/含透明通道贴图填充的矩形区域</td></tr><tr id="283cc471-0ea4-4edf-bd97-a6a32f64b625"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/DropShadowLabel.html">DropShadowLabel</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">绘制有阴影效果的标签</td></tr><tr id="ddb11fee-73e4-441e-b51a-8e03a424ee45"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/FocusTextInControl.html">FocusTextInControl</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">将焦点移至某个特定的文本区域</td></tr><tr id="43613a87-b7aa-4049-8aa1-4d00bb99c39b"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/GetPropertyHeight.html">GetPropertyHeight</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">获取绘制某个 <code>PropertyField</code> 所需的高度</td></tr><tr id="601a1e77-9176-4752-b9ad-a9f802a2b792"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/HandlePrefixLabel.html">HandlePrefixLabel</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">为控制区域生成一个前置标签</td></tr><tr id="383bfe8a-79cd-416a-be9e-12ccec21dc76"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/MultiFloatField%20MultiIntField.html">MultiFloatField,
+MultiIntField</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">一次性生成多个数值区域</td></tr><tr id="390b2457-e867-4682-97df-fe0941e82a18"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/MultiPropertyField.html">MultiPropertyField</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">一次性生成多个 <code>PropertyField</code> </td></tr><tr id="7677144b-e971-4777-9e6f-65a334640395"><td class="cell-title"><a href="EditorWindow%20EditorGUI/EditorGUI/ProgressBar.html">ProgressBar</a></td><td class="cell-jFs]"></td><td class="cell-6A&quot;0">生成一个进度条</td></tr></tbody></table></div><p id="e68da715-5b04-435b-a323-354c74148315" class="">
+</p></div></article></body></html>

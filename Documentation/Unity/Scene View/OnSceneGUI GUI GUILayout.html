@@ -1,0 +1,595 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>OnSceneGUI 和 GUI GUILayout</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="d6de5cb5-c2c9-4d78-a228-4db4f574442c" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🎡</span></div><h1 class="page-title">OnSceneGUI 和 <code>GUI</code> GUILayout</h1></header><div class="page-body"><h1 id="c6a70679-25e8-491e-89ad-aa5ee414d445" class=""><code>OnSceneGUI</code></h1><p id="7589eeca-e667-4207-84c5-56e6e5055e34" class="">如前所述，Scene 视图的绘制由 <code>Editor.OnSceneGUI</code> 方法实现。例如在 Scene 视图中添加一个按钮：</p><pre id="db6be0bb-fdec-493f-acab-e4de919f7f6f" class="code"><code>using UnityEngine;
+using UnityEditor;
+
+[CustomEditor (typeof (Camera))]
+public class SceneExtension : Editor {
+		private void OnSceneGUI () {
+				Handles.BeginGUI ();
+				GUILayout.BeginArea (new Rect (5, 5, 100, 100));
+		
+				if (GUILayout.Button (&quot;Button&quot;)) {
+						Debug.Log (&quot;Button clicked.&quot;);
+				}
+		
+				GUILayout.EndArea ();
+				Handles.EndGUI ();
+		}
+}</code></pre><figure id="ec9986a2-89d7-4e66-806b-66ba2c060ff7" class="image"><a href="OnSceneGUI%20GUI%20GUILayout/2019-01-094.41.27.png"><img style="width:480px" src="OnSceneGUI%20GUI%20GUILayout/2019-01-094.41.27.png"/></a></figure><p id="30bf1667-4e10-4775-8569-326360fc7536" class="">可以看出扩展 Scene 视图的一般方法是：</p><ul id="1a7e73d4-0906-4a51-b642-53c139774df6" class="bulleted-list"><li>扩展类继承于 <code>Editor</code>，并且必须具有一个 <code>CustomEditor</code> 属性，所以扩展 Scene 视图必须附加有对应的脚本或组件（例如这里的 <code>Camera</code>）</li></ul><ul id="54045bb1-9d9e-481a-b0f6-e9af7e4a4b7a" class="bulleted-list"><li>具体绘制在 <code>OnSceneGUI</code> 中完成，而且 <code>GUILayout</code> 和 <code>GUI</code> 必须作用在一组 <code>Handles.BeginGUI</code> 和 <code>Handles.BeginGUI</code> 之内，否则控件不会渲染</li></ul><ul id="4819ea20-ddd1-46f3-bdb3-b952c59b078e" class="bulleted-list"><li>使用 <code>GUILayout</code> 时习惯上都会通过 <code>GUILayout.BeginArea</code> 额外规定一个绘制的区域，如果不作规定，则绘制将会以整个 Scene 视图窗口为参照</li></ul><ul id="9276bff3-9c65-42ad-a0a3-810a8cbff8be" class="bulleted-list"><li>其余和扩展 Inspector 视图或编辑器窗口同理</li></ul><h1 id="80f7aaa1-e952-4d9d-a02d-386fbe1297cd" class="">GUILayout</h1><p id="691c3c19-86f9-4163-b852-485e544e131e" class=""><code>GUILayout</code> 和 <code>GUI</code> 的关系与 <code>EditorGUILayout</code> 和 <code>EditorGUI</code> 一样，前者为自动布局，后者一般需要额外提供一个具体绘制的区域。</p><p id="0dbbb673-712c-4e72-bb63-c188618351ce" class=""><code>GUILayout</code> 中很多静态方法与 <code>EditorGUILayout</code> 用法类似，例如下表中的对比：</p><div id="1745de00-628f-4a7b-a215-406a453cf655" class="collection-content"><h4 class="collection-title">GUILayout 与 EditorGUILayout 类似静态方法</h4><table class="collection-content"><thead><tr><th>EditorGUILayout 中类似的静态方法</th><th>GUILayout 中的静态方法</th><th>用法</th></tr></thead><tbody><tr id="f4bf98b6-b0d9-464e-9c67-d51d31195498"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/BeginHorizontal%20EndHorizontal%20BeginVertical%20EndVer.html">BeginHorizontal,
+EndHorizontal,
+BeginVertical,
+EndVertical</a></td><td class="cell-CgmW"><code>BeginHorizontal</code> , <code>EndHorizontal</code> , <code>BeginVertical</code> , <code>EndVertical</code></td><td class="cell-I0zk">开启/关闭水平或垂直绘制模式</td></tr><tr id="ede5ea45-250a-4a01-bb8b-6f1b54163382"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/BeginScrollView%20EndScrollView.html">BeginScrollView,
+EndScrollView</a></td><td class="cell-CgmW"><code>BeginScrollView</code> , <code>EndScrollView</code></td><td class="cell-I0zk">绘制滚动视图</td></tr><tr id="b5d30edd-d456-4d7c-a593-d38a8b5e2d22"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/Slider.html">Slider</a></td><td class="cell-CgmW"><code>HorizontalSlider</code> , <code>VerticalSlider</code></td><td class="cell-I0zk">生成可拖动的滑动条</td></tr><tr id="7d46b86f-a341-40ac-9027-3110bc2b2fed"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/LabelField.html">LabelField</a></td><td class="cell-CgmW"><code>Label</code></td><td class="cell-I0zk"></td></tr><tr id="bf1b1006-42db-4c30-821f-e16603985a14"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/Space.html">Space</a></td><td class="cell-CgmW"><code>Space</code></td><td class="cell-I0zk">添加空白区域</td></tr><tr id="0d1eaddb-b60b-446f-9f5d-dc54c88e6a07"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/PasswordField.html">PasswordField</a></td><td class="cell-CgmW"><code>PasswordField</code></td><td class="cell-I0zk">生成密码区域</td></tr><tr id="46860042-79cf-4a89-9a16-418145ace0ee"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/TextField.html">TextField</a></td><td class="cell-CgmW"><code>TextArea</code> , <code>TextField</code></td><td class="cell-I0zk">生成一块显示可编辑文本的区域</td></tr><tr id="e215f6e4-394f-4bc7-ae3b-e3584c3717fa"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20EditorGUILayout/Toggle%20ToggleLeft.html">Toggle,
+ToggleLeft</a></td><td class="cell-CgmW"><code>Toggle</code></td><td class="cell-I0zk">生成一个开关</td></tr></tbody></table></div><p id="329b6a7f-84c8-46e8-b315-ea7ad08534d9" class=""><code>GUILayout</code> 也包含一些特有的控制区域：</p><div id="a8c0c35f-53bd-4dec-8f7c-5c65d121b7c4" class="collection-content"><h4 class="collection-title">GUILayout 可以生成的控制区域</h4><table class="collection-content"><thead><tr><th>Name</th><th>示例程序</th><th>说明</th></tr></thead><tbody><tr id="8e9c9dfd-97fe-4a82-aa75-46009bd137e9"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/BeginArea%20EndArea.html">BeginArea,
+EndArea</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">在 Scene 视图中开启一个指定的绘制区域</td></tr><tr id="5e89d043-6134-4d3d-821e-b189e9661778"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/Box.html">Box</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成一个自动布局的 box</td></tr><tr id="2cf49f38-b54b-4125-a9a3-8f185ac53e6b"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/Button%20RepeatButton.html">Button,
+RepeatButton</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成按钮</td></tr><tr id="b73d0e7f-3eca-40dd-8dfa-02910221eb61"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/FlexibleSpace.html">FlexibleSpace</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成一个自适应尺寸的空白区域</td></tr><tr id="2874a272-c55c-44e0-89b5-b5006c3a79f6"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/SelectionGrid.html">SelectionGrid</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成一个选择网格</td></tr><tr id="2348fdd7-646c-4312-8b10-af42c8f82e5e"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/Toolbar.html">Toolbar</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成一个工具栏</td></tr><tr id="074cdc34-4b3b-43a1-974e-65ab23c49ea6"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/HorizontalScrollbar%20VerticalScrollbar.html">HorizontalScrollbar,
+VerticalScrollbar</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成水平或竖直的滚动条</td></tr><tr id="838a996a-9773-4e20-990d-7465567bc5c7"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout/Window.html">Window</a></td><td class="cell-_iWK"></td><td class="cell-9CVR">生成一个窗口</td></tr></tbody></table></div><p id="3be9d188-22fa-491b-9e60-0d1de755b574" class="">此外 <code>GUILayout</code> 还包含一些静态方法，可用于定义 <code>GUIOption</code> 类型的变量：例如 <code>GUILayout.Height</code> 和 <code>GUILayout.Width</code> 定义固定的宽高，<code>GUILayout.ExpandHeight</code> 和 <code>GUILayout.ExpandWidth</code> 定义是否自动延展，<code>GUILayout.MaxHeight</code> 和 <code>GUILayout.MaxWidth</code> 定义宽高的最值等等。以下示例详细展示了这类静态方法的用法：</p><figure id="4b2d522a-8cf0-4754-8106-00a1bc119203" class="link-to-page"><a href="OnSceneGUI%20GUI%20GUILayout/GUILayout%20GUIOption.html"><span class="icon">🏂</span>GUILayout 用于定义 GUIOption 类型的静态方法</a></figure><h1 id="c0474bac-39f0-4376-b94d-f4fc7f7ce171" class="">GUI</h1><p id="7f581975-8b8f-455d-9810-95bec62a18d1" class="">与 <code>EditorGUI</code> 和 <code>EditorGUILayout</code> 的关系一样，<code>GUI</code> 也包含大量与 <code>GUILayout</code> 相似的方法，只需额外提供一个指定的绘制位置和尺寸。以下列举了 <code>GUI</code> 中特有的方法：</p><div id="54a12b0a-3cc8-4743-8384-16637ec8061b" class="collection-content"><h4 class="collection-title">GUI</h4><table class="collection-content"><thead><tr><th>Name</th><th>说明</th></tr></thead><tbody><tr id="1ccdd0a7-69d6-4c53-91ed-87ea0fa2aecf"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/BeginGroup%20EndGroup.html">BeginGroup,
+EndGroup</a></td><td class="cell-)7Q2">生成一个控件组</td></tr><tr id="491bd701-d4cd-4d45-a68f-486dab8d83ad"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/BringWindowToBack%20BringWindowToFront.html">BringWindowToBack,
+BringWindowToFront</a></td><td class="cell-)7Q2">将某个窗口移到最前或最后</td></tr><tr id="fe843f26-162b-4609-a69d-9c3c23614cc8"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/DragWindow.html">DragWindow</a></td><td class="cell-)7Q2">使窗口可以用鼠标拖动</td></tr><tr id="72c1736c-88a0-48b9-b5fa-ea8109b727d8"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/DrawTexture.html">DrawTexture</a></td><td class="cell-)7Q2">在一个矩形区域内绘制纹理</td></tr><tr id="3b43530d-1292-4c04-8f41-b4d702a35793"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/DrawTextureWithTexCoords.html">DrawTextureWithTexCoords</a></td><td class="cell-)7Q2">根据给定的纹理坐标绘制矩形</td></tr><tr id="73f646ae-3c3a-4f5a-9884-ddd0d3078b8c"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/FocusControl%20GetNameOfFocusedControl%20SetNextContro.html">FocusControl,
+GetNameOfFocusedControl,
+SetNextControlName</a></td><td class="cell-)7Q2">将焦点移至某个控件上/获取焦点控件的名字/设置下一个控件的名字</td></tr><tr id="584a50f1-deb9-434a-b020-0b3f9acc2d2e"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/FocusWindow%20UnfocusWindow.html">FocusWindow,
+UnfocusWindow</a></td><td class="cell-)7Q2"></td></tr><tr id="33c952f6-1551-4a49-bc8b-2137cb1e44cb"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/ModalWindow%20Window.html">ModalWindow,
+Window</a></td><td class="cell-)7Q2">生成一个模态或普通弹出窗口</td></tr><tr id="df82d796-cf98-4e2a-a369-791d7125a01c"><td class="cell-title"><a href="OnSceneGUI%20GUI%20GUILayout/GUI/ScrollTo.html">ScrollTo</a></td><td class="cell-)7Q2">移动到滚动视图中的某一区域</td></tr></tbody></table></div></div></article></body></html>

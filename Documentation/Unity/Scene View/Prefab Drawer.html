@@ -1,0 +1,632 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Prefab Drawer 基本逻辑</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="d911e4c9-e16c-4eeb-b3ea-7bf964a3978a" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🗄</span></div><h1 class="page-title">Prefab Drawer 基本逻辑</h1></header><div class="page-body"><p id="61d95cbf-58b5-4a8c-aa5b-8220de8c982b" class="">扩展编辑器窗口部分中已经完成了一个简单的 Prefab 管理工具，可以对工程下的 Prefab 进行简单的操作。现在通过对 Scene View 的扩展，实现一个简单的 Prefab 绘制工具，主要包含以下功能：</p><ul id="fad804e5-e967-40e2-8105-e6f2e50f5b2e" class="bulleted-list"><li>没有任何操作的基本展示</li></ul><ul id="3a4a0409-9d8f-4858-883e-1fcbc488b5b4" class="bulleted-list"><li>以类似画笔的方式将 Prefab 添加到场景中</li></ul><ul id="c0313836-91bc-469c-9f90-d9dd2b3e841f" class="bulleted-list"><li>以类似橡皮的方式将场景中的 Prefab 实例删除</li></ul><p id="aacb5bb9-ce0c-4d5f-be39-002978ba7728" class="">实现之前，首先需要把与 Prefab Center 相关的资源、脚本等导入工程。然后新建脚本 <code>Assets/Tools/PrefabDrawer/Editor/PrefabDrawerSceneView.cs</code>。</p><h1 id="f5375813-a447-4d0b-a79c-7fda7ded5757" class="">Prefab Drawer 的多种模式</h1><p id="1c5a6814-ad19-475c-9c76-780f156430c0" class="">首先通过工具栏实现多种模式的选择切换：</p><pre id="a8a3bd18-15cc-42f4-b0d2-c8f33facf254" class="code"><code>private void DrawToolbar () {
+		_mode = (Mode)GUI.Toolbar (
+				new Rect (5, 5, 300, 40),
+				(int)_mode,
+				new string [] { &quot;View&quot;, &quot;Paint&quot;, &quot;Erase&quot; }
+		);
+}</code></pre><p id="e527d367-da1f-4259-b7a6-4ffd3ecf6985" class="">其中 <code>Mode</code> 为自定义的枚举类型，表示当前的模式：</p><pre id="1f88cd19-cabf-49c9-94b3-b8d1558f7584" class="code"><code>public enum Mode {
+		View = 0,
+		Paint,
+		Erase
+}</code></pre><p id="eeaf3254-6e50-4192-afa7-3852aef77bb5" class="">后续的具体逻辑中，只需依据 <code>_mode</code> 的值分别进行处理即可。</p><h1 id="c92bb7b8-5233-461f-a647-f27297823b6d" class="">Unity 默认工具的预设</h1><p id="fdb0399e-9918-42ea-a193-b49ee867a345" class="">Unity 内置有多种工具，最基本的工具栏位于 Unity 面板的顶部：</p><figure id="673754c8-dd82-4d80-abad-c2f9172c51e0" class="image"><a href="Prefab%20Drawer/2019-01-223.51.41.png"><img style="width:1600px" src="Prefab%20Drawer/2019-01-223.51.41.png"/></a></figure><p id="9994f1d4-f68d-43d3-aa3c-b9eb68420f9d" class="">其中最左侧的工具栏对应 Scene 视图中的基本操作，例如视图工具、移动工具、放缩工具、旋转工具等。为避免 Unity 的默认工具和 Prefab Drawer 的操作冲突，我们需要通过代码预设默认工具：</p><pre id="fb1c85df-b5ba-496e-81f7-e0acf6f09787" class="code"><code>private void HandleUnityTools () {
+		switch (_mode) {
+		case Mode.View:
+				Tools.current = Tool.View;
+				break;
+		case Mode.Paint:
+		case Mode.Erase:
+				Tools.current = Tool.None;
+				break;
+		}
+}</code></pre><h1 id="3148e612-572e-4b03-9acb-e047283b89ff" class="">绘制模式</h1><p id="19b7b8ef-75fe-43b9-8712-a98fa626b355" class="">在绘制模式下，用户可以在 Scene 视图中通过单击鼠标快速添加物体。应该实现这样一个函数：将使用者鼠标点击的位置传入，然后便可以在场景的对应位置中生成一个确定 Prefab 的实例。需要实现的核心步骤如下：</p><ul id="36957534-937e-440b-a645-2de0ca54a7d4" class="bulleted-list"><li>预先确定好一个 Prefab</li></ul><ul id="a71980e3-0d71-4f0f-abf2-0fcb85a0ad69" class="bulleted-list"><li>将鼠标位置转换为场景中的位置</li></ul><ul id="0dc1293d-eef0-4117-813a-4a7d57d884f5" class="bulleted-list"><li>在场景中示例化 Prefab</li></ul><p id="4c21b05a-4ef2-4a65-896b-fbc64542e5f1" class="">首先在 Prefab Drawer 的 Inspector 视图中设置一个控件，用于设定要绘制的 Prefab。新建脚本 <code>Assets/Scripts/PrefabDrawer/PrefabDrawer.cs</code> 并添加代码：</p><pre id="aef87414-fda1-4a44-9207-5f22224b261e" class="code"><code>using UnityEngine;
+
+namespace SceneViewExtension.PrefabDrawer {
+		public class PrefabDrawer : MonoBehaviour {
+				[SerializeField]
+				GameObject _selectedPrefab;
+		
+				public GameObject SelectedPrefab {
+						get { return _selectedPrefab; }
+						set { _selectedPrefab = value; }
+				}
+		}
+}</code></pre><p id="0b70e2ca-8d6e-4c83-880f-cdb4792b66ff" class="">则可以通过设置控件来设定想要绘制的 Prefab：</p><figure id="d1658dae-0cc8-4da5-acee-c521f71657cc" class="image"><a href="Prefab%20Drawer/2019-01-224.37.28.png"><img style="width:480px" src="Prefab%20Drawer/2019-01-224.37.28.png"/></a></figure><p id="16ea0e1c-af6c-4135-b13c-d0ad38d7b69c" class="">然后代码实现屏幕左边转换为 2D 场景坐标。由于这里的坐标转换参照的 Camera 并不是新建场景中的默认照相机，而是 Scene 视图对应的 <code>SceneView.currentDrawingSceneView.camera</code> ，所以在具体转换中需要进行一些额外的计算：</p><pre id="cde47aeb-196f-4dcf-885b-8e6359387acc" class="code"><code>private Vector3 ScreenCoordsToSceneViewCoords (Vector3 screen) {
+		Camera camera = SceneView.currentDrawingSceneView.camera;
+		Vector3 newPos = camera.ScreenToWorldPoint (new Vector3(screen.x * 2, (camera.pixelHeight / 2 - screen.y) * 2, 0));
+	
+		return new Vector3 (newPos.x, newPos.y, 0);
+}</code></pre><p id="9054e69b-c1b1-4249-8b80-412b95312c7f" class="">最后将选定好的 <code>SelectedPrefab</code> 实例化，并移动到转换后的坐标位置上：</p><pre id="1f97cc7f-bbed-40c3-9876-4464485842fa" class="code"><code>private void Paint (Vector3 pos) {
+		if (_target.SelectedPrefab) {
+				GameObject newObj = (GameObject)PrefabUtility.InstantiatePrefab (_target.SelectedPrefab);
+				newObj.transform.position = ScreenCoordsToSceneViewCoords (pos);
+				newObj.AddComponent&lt;PrefabDrawerItem&gt; ();
+				_objs.Add (newObj);
+		} else {
+				Debug.LogError (&quot;No selected prefab.&quot;);
+		}
+}</code></pre><h1 id="4003b257-bb4c-4d17-b779-268f99c35709" class="">擦除模式</h1><p id="c86f069c-e76e-4e70-b52f-0c3268b879d4" class="">在擦除模式下，用户可以在 Scene 视图中通过单击或者拖动鼠标删除之前绘制的 Prefab 实例。一个不考虑性能的简单实现方式为：在单击或拖动鼠标时，将屏幕坐标转换为场景坐标，然后判断这个坐标是否被某个物体的包围盒所包含，如果是则将这个物体删除。</p><p id="ae3721c1-7116-4788-9c4b-5e641123afd2" class="">首先需要知道哪些物体是之前由 Prefab Drawer 绘制的物体。为了找到这些物体，现通过代码在绘制时给新建的物体挂一个脚本 <code>PrefabDrawerItem</code>，并把这些物体都收集到一个列表中，从而之后便于寻找：</p><pre id="873da0e2-4332-4e0a-a5aa-6e84ec3e496f" class="code"><code>private void Paint (Vector3 pos) {
+		if (_target.SelectedPrefab) {
+				// ...
+
+				newObj.AddComponent&lt;PrefabDrawerItem&gt; ();
+				_objs.Add (newObj);
+		} else {
+				// ...
+		}
+}</code></pre><p id="e716dfe6-d65b-4bab-aa7c-2d9feefb4aa6" class="">然后只需简单的坐标转换和遍历判断即可：</p><pre id="7fb04c6b-1d6d-4e44-873c-9c4cb1a22cf7" class="code"><code>private void Erase (Vector3 pos) {
+		Camera camera = SceneView.currentDrawingSceneView.camera;
+		Vector3 worldCoord = ScreenCoordsToSceneViewCoords (pos);
+	
+		foreach (GameObject obj in _objs) {
+				if (obj.GetComponent&lt;Collider2D&gt;().bounds.Contains(worldCoord)) {
+						_objs.Remove (obj);
+						DestroyImmediate (obj);
+						break;
+				}
+		}
+}</code></pre><p id="f16f8022-0d95-4546-b2f7-0f2b1133f391" class="">
+</p></div></article></body></html>

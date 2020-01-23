@@ -1,0 +1,623 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>DelayedDoubleField,
+DelayedFloatField,
+DelayedIntField,
+DelayedTextField</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="d2663ff9-699a-44bf-88ee-9471da3dbee1" class="page sans"><header><h1 class="page-title">DelayedDoubleField,
+DelayedFloatField,
+DelayedIntField,
+DelayedTextField</h1><table class="properties"><tbody><tr class="property-row property-row-text"><th>示例程序</th><td></td></tr><tr class="property-row property-row-text"><th>说明</th><td>生成可以键入浮点数、整数、文本且延迟影响变量值的区域</td></tr></tbody></table></header><div class="page-body"><h1 id="bdbeb729-b33b-43b3-bc0e-31eff518b299" class="">用法</h1><p id="a42f0414-162c-4ee7-9d32-d06436e4f9cb" class="">四种方法的用法一致，只需改变相应的函数名称和变量类型即可。是 <code>DoubleField</code> <code>FloatField</code> <code>IntField</code> <code>TextField</code> 对应的有延迟版本，延迟是指新键入的值直到用户按下 <code>ENTER</code> 或者该区域失去鼠标焦点时才会被返回给被控制的变量。</p><pre id="7edbdddd-e26b-4127-97a7-da151407a3a3" class="code"><code>public static double DelayedDoubleField(double value, params GUILayoutOption[] options);
+
+public static double DelayedDoubleField(double value, GUIStyle style, params GUILayoutOption[] options);
+
+public static double DelayedDoubleField(string label, double value, params GUILayoutOption[] options);
+
+public static double DelayedDoubleField(string label, double value, GUIStyle style, params GUILayoutOption[] options);
+
+public static double DelayedDoubleField(GUIContent label, double value, params GUILayoutOption[] options);
+
+public static double DelayedDoubleField(GUIContent label, double value, GUIStyle style, params GUILayoutOption[] options);</code></pre><h1 id="8e719287-37f1-4669-ab34-3b62ae2f300c" class="">参数</h1><p id="f8b660c5-8993-45c2-bcf2-cfb4e1afdc98" class=""><strong><code>label</code></strong> <div class="indented"><p id="f7b073a8-aaf0-4a61-949a-7744a914127e" class="">对应的标签名称。</p></div></p><p id="30b81598-f58c-44b7-9eac-9e41385c58df" class=""><strong><code>value</code></strong> <div class="indented"><p id="f2545f47-6085-4ffc-99d5-2ce1888a29fb" class="">该区域控制的变量，类型可以是 <code>double</code> <code>float</code> <code>int</code> <code>string</code>，改变相应的函数名即可。</p></div></p><p id="e448aee1-921a-460e-941f-83315add6bf0" class=""><strong><code>style</code></strong> <div class="indented"><p id="c56e1899-5e92-4b1f-994a-f5d97b889da3" class="">（可选）由 <code>GUIStyle</code> 类型定义的 GUI 样式。</p></div></p><p id="4ee368b9-45f4-4801-8419-3048bc206dd8" class=""><strong><code>options</code></strong> <div class="indented"><p id="30a8f730-a0ce-4f6a-8bd6-3d1a10181cac" class="">（可选）用于指定额外的布局属性，该参数将覆盖默认样式。</p></div></p><h1 id="d6f58958-e0e2-40d1-ab53-49ce6f57119e" class="">示例</h1><pre id="f4af102c-8214-4ba5-8eb9-5ef9bc395252" class="code"><code>public override void OnInspectorGUI () {
+
+		// GUI style
+		GUIStyle style = new GUIStyle ();
+		style.fontSize = 30;
+		style.normal.background = Texture2D.whiteTexture;
+		style.normal.textColor = Color.red;
+		style.margin = new RectOffset (0, 0, 3, 3);
+		style.padding = new RectOffset (10, 10, 10, 10);
+		style.alignment = TextAnchor.MiddleLeft;
+	
+		// double
+		_target.DoubleValue = EditorGUILayout.DelayedDoubleField (&quot;Double Value&quot;, _target.DoubleValue, style, GUILayout.Height(50));
+	
+		// float
+		_target.FloatValue = EditorGUILayout.DelayedFloatField (&quot;Float Value&quot;, _target.FloatValue, style, GUILayout.Height (50));
+	
+		// int
+		_target.IntValue = EditorGUILayout.DelayedIntField (&quot;Int Value&quot;, _target.IntValue, style, GUILayout.Height (50));
+	
+		// text
+		_target.TextValue = EditorGUILayout.DelayedTextField (&quot;Text Value&quot;, _target.TextValue, style, GUILayout.Height (50));
+
+}</code></pre><p id="45e9e1d8-1a3e-4e93-8698-3a26959c5b51" class="">编译结果如下：</p><figure id="0c8b1165-8531-4020-840a-6af652dab887" class="image"><a href="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.34.23.png"><img style="width:480px" src="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.34.23.png"/></a></figure><p id="a3803165-e291-453e-b493-d31cea42bb34" class="">为展示其延迟效果，在 <code>OnInspectorGUI()</code> 中追加代码：</p><pre id="223dc5da-3d9c-4f63-933b-d306fc4f0f9c" class="code"><code>// update the dispalying text
+_display = string.Join (&quot;\n&quot;, new string [] {
+			&quot;Delayed Double Value: &quot; + _target.DoubleValue.ToString (),
+			&quot;Delayed Float Value: &quot; + _target.FloatValue.ToString (),
+			&quot;Delayed Int Value: &quot; + _target.IntValue.ToString (),
+			&quot;Delayed Text Value: &quot; + _target.TextValue
+});
+
+// force redraw every time when _target changes
+if (GUI.changed) {
+			EditorUtility.SetDirty (_target);
+}</code></pre><p id="9194bf56-16d9-469e-a3b3-833e19f06705" class="">整体追加在 Scene View 中绘制文字的代码：</p><pre id="cd8b5c5a-8d89-4e47-a78e-98ecc9cf6bb9" class="code"><code>private void OnSceneGUI () {
+		Handles.BeginGUI ();
+		
+		GUILayout.BeginArea (new Rect (10f, 10f, 360f, 100f));
+		GUILayout.Label (_display);
+		GUILayout.EndArea ();
+		
+		Handles.EndGUI ();
+}</code></pre><p id="0ae0846d-e8f8-4ac5-b993-c9c560aba8f9" class="">当修改 Double Value 区域的值后，不按下 <code>ENTER</code> 且保持鼠标焦点在该区域，Scene View 中的对应文本未发生变化：</p><div id="5d539c7b-2f20-4781-8389-d64de5425827" class="column-list"><div id="4fe939ca-2d05-4b77-84ee-06e9d5c3e21d" style="width:50%" class="column"><figure id="c617d394-291d-4452-93f9-61e35137ab57" class="image"><a href="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.40.23.png"><img style="width:1182px" src="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.40.23.png"/></a></figure></div><div id="13114722-bb63-4a15-a867-dd2106b1b429" style="width:50%" class="column"><figure id="42ea6ce4-a710-4174-8bfb-eb4762bd73ed" class="image"><a href="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.40.18.png"><img style="width:1182px" src="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.40.18.png"/></a></figure></div></div><p id="c3dd315f-4b62-428c-8978-0efe1ae8aa75" class="">当按下 <code>ENTER</code> 或鼠标点击该区域外边（但要保证 Inspector 在面板内，否则不会绘制文本）时，对应文本才会更新：</p><div id="e6018986-9f52-4c81-be6f-d7c9dab767d9" class="column-list"><div id="1162b273-93a0-4af7-83b5-1556f5ee8f02" style="width:50%" class="column"><figure id="f2afafd2-8e37-420e-ae93-fcf0d046011a" class="image"><a href="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.42.40.png"><img style="width:1182px" src="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.42.40.png"/></a></figure></div><div id="c65e0d1c-edfc-4b05-b72d-b91ddbe586d0" style="width:50%" class="column"><figure id="cc374be0-a95a-4ea6-8c9b-95269f4599e2" class="image"><a href="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.42.39.png"><img style="width:1182px" src="DelayedDoubleField%20DelayedFloatField%20DelayedIntFie/2018-11-294.42.39.png"/></a></figure></div></div><p id="559d9fd2-2700-4158-91ed-0f459680da75" class="">另外可以发现，有延迟效果的控制区域不可以通过鼠标拖动修改变量的值，而普通的控制区域如 <code>DoubleField</code> 是可以的。</p></div></article></body></html>

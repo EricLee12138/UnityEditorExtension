@@ -1,0 +1,695 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>实现基本功能</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="8674e695-264d-4e1f-9fb7-d7d43214f40d" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🚞</span></div><h1 class="page-title">实现基本功能</h1></header><div class="page-body"><h1 id="e2065829-4e96-4f43-aa2b-9915901a62f7" class="">显示所有的 Prefab</h1><p id="c223e988-2547-48ef-93f4-3f08cf61a8f9" class="">Prefab Center 首先必须可以显示所有的 Prefab ，这里默认都存放在路径 <code>Assets/Prefabs</code> 下。Unity 内提供了一套查找资源的方式，主要通过 <code>AssetDatabase</code> 实现。</p><p id="3b3695fd-920f-412f-a72c-6b4cddadc269" class="">在此之前，为了便于后期对 Prefab 的分类，在所有要显示的 Prefab 上添加一个组件 <code>PrefabCenterItem</code> ，由脚本 <code>Assets/Scripts/PrefabCenter/PrefabCenterItem.cs</code> 定义：</p><pre id="cb8cdca3-39f6-45bb-8b67-8a989859f22e" class="code"><code>using UnityEngine;
+
+namespace EditorWindowExtension.PrefabCenter {
+		public enum PrefabCategory {
+				None = 0,
+				Players,
+				Enemies,
+				Collectables,
+				Blocks
+		};
+
+		public class PrefabCenterItem : MonoBehaviour {
+				[SerializeField]
+				PrefabCategory _prefabType = PrefabCategory.None;
+		
+				public PrefabCategory Type {
+						get { return _prefabType; }
+				}
+		}
+}</code></pre><p id="6615de8a-ac0b-46d9-a2a2-9ad170e0ec9e" class="">这样就可以通过 <code>GetComponent&lt;PrefabCenterItem&gt;</code> 确认是否要显示在 Prefab Center 中。具体通过下边的函数实现：</p><pre id="91605a26-1fab-4679-b8cf-a22f8be9e856" class="code"><code>private List&lt;GameObject&gt; GetPrefabsFromAssetDatabase() {
+		string [] guids = AssetDatabase.FindAssets (&quot;t:Prefab&quot;, new string [] { &quot;Assets/Prefabs&quot; });
+		List&lt;GameObject&gt; prefabs = new List&lt;GameObject&gt; ();
+	
+		foreach (string guid in guids) {
+				var assetPath = AssetDatabase.GUIDToAssetPath (guid);
+				var asset = AssetDatabase.LoadAssetAtPath (assetPath, typeof (GameObject)) as GameObject;
+				if (asset.GetComponent&lt;PrefabCenterItem&gt; ()) {
+						prefabs.Add (asset);
+				}
+		}
+
+		return prefabs;
+}</code></pre><p id="2919d1fb-da91-4a6c-aa37-f5ed701d6c2a" class="">上述代码首先通过 <code>AssetDatabase.FindAssets</code> 获取所有 Prefab 的 GUID，然后根据 GUID 获取到资源的路径，再通过路径找到资源本身，最后判断资源下是否存在 <code>PrefabCenterItem</code> 组件，从而筛选出所有要显示的 Prefab 并以列表的形式返回。</p><p id="093073e4-fa70-4071-abdb-3beb40152a2d" class="">获取到所有的 Prefab 后就可以具体实现绘制函数 <code>OnGUI</code> ：</p><pre id="71febcff-997e-46a9-ad99-4ff446227383" class="code"><code>private void OnGUI () {
+		DrawToolBar ();
+
+		var buttonWidth = (position.width - 25) / 4;
+		var buttonHeight = buttonWidth + 15;
+		
+		GUIStyle guiStyle = new GUIStyle (GUI.skin.button);
+		guiStyle.fontStyle = FontStyle.Bold;
+		guiStyle.alignment = TextAnchor.MiddleCenter;
+		guiStyle.imagePosition = ImagePosition.ImageAbove;
+		
+		int i = 0;
+		foreach (var item in _prefabItems) {
+		    var buttonLeft = 5 + (i % 4) * (buttonWidth + 5);
+		    var buttonTop = 27 + (i / 4) * (buttonHeight + 5);
+				Rect buttonPos = new Rect (buttonLeft, buttonTop, buttonWidth, buttonHeight);
+        
+				DrawPrefabItem (item, buttonPos, guiStyle);
+		    i++;
+		}
+}</code></pre><p id="327140e8-32e1-40b5-b5ad-63d95d6a158e" class="">绘制单个 Prefab 的函数 <code>DrawPrefabItem</code> 定义如下：</p><pre id="cc3f9c83-7a30-44e7-a0d3-c80e81e97239" class="code"><code>private void DrawPrefabItem (GameObject item, Rect pos, GUIStyle style) {
+    Texture2D texture = AssetPreview.GetAssetPreview (item);
+    GUI.Button (
+        pos,
+        new GUIContent (item.name, texture),
+        style
+    );
+}</code></pre><figure id="73e5813a-3589-4156-b9f5-556e8a8b4e27" class="image"><a href="Untitled%201/2019-01-085.45.55.png"><img style="width:480px" src="Untitled%201/2019-01-085.45.55.png"/></a></figure><h1 id="d7be8503-9c7b-4f10-b10a-90f85432cc0e" class="">根据种类筛选</h1><p id="72b16df8-4153-476d-9d76-993642072b34" class="">用户想要显示的 Prefab 种类由之前绘制的工具栏返回，对应变量 <code>_toolBarIndex</code>；Prefab 实际的种类包含在组件 <code>PrefabCenterItem</code> 中。如果二者相等则予以绘制，否则不绘制。此外，当用户选择的是 <code>All</code> （即 <code>_toolBarIndex</code> 为 0）时，一律都予以绘制：</p><pre id="35a553dc-e558-40db-8915-ae3d595990ac" class="code"><code>private void OnGUI () {
+		// ...
+		foreach (var item in _prefabItems) {
+		    if (_toolBarIndex == 0 || (int)item.GetComponent&lt;PrefabCenterItem&gt; ().Type == _toolBarIndex) {
+		        // ...
+		        DrawPrefabItem (item, buttonPos, guiStyle);
+		        // ...
+		    }
+		}
+}</code></pre><div id="5a92837a-43f2-43aa-9620-e194c0353d66" class="column-list"><div id="55fc0672-80fc-4512-b45a-e20e41d79adf" style="width:50%" class="column"><figure id="f9ce6ea5-fe3c-4417-b725-50246215168d" class="image"><a href="Untitled%201/2019-01-085.46.55.png"><img style="width:1182px" src="Untitled%201/2019-01-085.46.55.png"/></a></figure></div><div id="bb68af41-c0c5-4662-91b9-0528a88ad597" style="width:50%" class="column"><figure id="2eb71ecd-d957-489a-a4fc-35ff3443ccf0" class="image"><a href="Untitled%201/2019-01-085.46.51.png"><img style="width:1182px" src="Untitled%201/2019-01-085.46.51.png"/></a></figure></div></div><h1 id="133ed5e5-70e4-4b7a-a95c-4f00a14d6dd1" class="">添加基本操作</h1><p id="e4c09ee3-2dad-422e-adcb-189d1ee6a22d" class="">目前所有的 Prefab 都以按钮的形式显示在编辑器窗口中。通过判断按钮是否被按下，即可添加对应的响应事件。</p><p id="ecb713bd-19c1-4188-a412-cd28d58cf07a" class="">在 <code>DrawPrefabItem</code> 中添加 if 语句：</p><pre id="7209b594-89de-4b49-a103-c627651e4d17" class="code"><code>if (GUI.Button (
+    pos,
+    new GUIContent (item.name, texture),
+    style
+)) {
+    _showDetail = true;
+    _shownItem = item;
+    _detailPosition = pos;
+}</code></pre><p id="3133dbec-2101-401d-bcf3-6cd464287c03" class="">即当某个 Prefab 对应的按钮被按下时，表示接下来要进行 <code>_showDetail</code> 的操作，并记录要显示详情的 <code>_shownItem</code> 和要显示的位置 <code>_detailPosition</code> 。</p><p id="b50d1452-22ca-4198-8150-583fdcaec09f" class="">然后在绘制函数中添加显示详细操作的逻辑：</p><pre id="05b84187-f620-4abd-9cfb-7dfd169c1ae8" class="code"><code>private void OnGUI () {
+		// ...
+		foreach (var item in _prefabItems) {
+		    if (_toolBarIndex == 0 || (int)item.GetComponent&lt;PrefabCenterItem&gt; ().Type == _toolBarIndex) {
+		        var buttonLeft = 5 + (i % 4) * (buttonWidth + 5);
+		        var buttonTop = 27 + (i / 4) * (buttonHeight + 5);
+		        Rect buttonPos = new Rect (buttonLeft, buttonTop, buttonWidth, buttonHeight);
+		
+		        if (buttonPos != _detailPosition || !_showDetail)
+		            DrawPrefabItem (item, buttonPos, guiStyle);
+		
+		        i++;
+		    }
+		}
+
+		DrawDetail ();
+}</code></pre><pre id="d4b32188-1d6c-437c-8b4a-d87aa465c032" class="code"><code>private void DrawDetail () {
+		if (_showDetail) {
+				BeginWindows ();
+				GUI.Window (1, _detailPosition, OnDetailGUI, _shownItem.name);
+				EndWindows ();
+		}
+}</code></pre><p id="33ec590f-e952-4099-b210-b75c616ee77a" class="">其中由 <code>OnDetailGUI</code> 定义详情窗口的绘制方法，包含一个添加该 Prefab 到场景中的按钮和关闭按钮：</p><pre id="8a078db4-12f6-4248-9594-1362696d660b" class="code"><code>private void OnDetailGUI (int id) {
+		if (GUI.Button (new Rect (5, 20, _detailPosition.width - 10, 17), &quot;Add to scene&quot;)) {
+				Instantiate (_shownItem).name = _shownItem.name;
+		}
+	
+		if (GUI.Button (new Rect (_detailPosition.width - 16, _detailPosition.height - 16, 12, 12), GUIContent.none, &quot;WinBtnCloseMac&quot;)) {
+				_showDetail = false;
+		}
+		GUI.FocusWindow (1);
+}</code></pre><figure id="31322262-25b8-4393-b823-aa8bbcce8792" class="image"><a href="Untitled%201/2019-01-085.48.32.png"><img style="width:480px" src="Untitled%201/2019-01-085.48.32.png"/></a></figure><h1 id="ccaa0633-762d-4d15-9b53-8ff229bc915d" class="">完善细节</h1><p id="1ddd02af-7916-43e7-91d7-f845426a12ec" class="">上述步骤完成后已经可以达到基本的效果，打开 Prefab Center 后可以看到所有的 Prefab 并且可以进行分类和简单操作。但是可以发现打开一个 Prefab 的详细菜单后，更换 Prefab 种类或者改变窗口的大小后，菜单会以原来的尺寸留在原地，视觉效果不好。为解决这个问题，在代码中添加以下简单逻辑：</p><ul id="9111b8e6-325d-4f77-b12e-522574abaf4d" class="bulleted-list"><li>当编辑器窗口的宽度发生变化时，发送 Resize 事件<pre id="aaa50f69-90ba-4a60-8546-3402891b8557" class="code"><code>private void Update () {
+    if (_prevPosition.width != position.width) {
+        SendEvent (EditorGUIUtility.CommandEvent (&quot;Resize&quot;));
+    }
+    _prevPosition = new Rect (position);
+}</code></pre></li></ul><ul id="7dfa26f9-29ab-4feb-844d-3c38b4cc017f" class="bulleted-list"><li>当更改 Prefab 的种类时，发送 SwitchType 事件：<pre id="e2b45e0b-1953-45f5-9ccd-44a056a51020" class="code"><code>private void DrawToolBar () {
+    // ...
+		if (_toolBarIndex != _prevIndex) {
+        SendEvent (EditorGUIUtility.CommandEvent(&quot;SwitchType&quot;));
+    }
+}</code></pre></li></ul><ul id="1fd59e6f-9550-470c-99af-2c2302e2c69d" class="bulleted-list"><li>接收到 Resize 或者 SwitchType 事件时，不绘制详情窗口：<pre id="67395b6d-3a39-406f-998a-f9c67cb5ce73" class="code"><code>private void OnGUI () {
+		// ...
+		
+		HandleEvent (Event.current);
+		DrawDetail ();
+}</code></pre><pre id="7f4921c4-bead-4c26-aebd-a0b2108cfe32" class="code"><code>private void HandleEvent (Event e) {
+    switch (e.commandName) {
+        case &quot;SwitchType&quot;:
+        case &quot;Resize&quot;:
+            _showDetail = false;
+            break;
+    }
+    Repaint ();
+}</code></pre></li></ul></div></article></body></html>

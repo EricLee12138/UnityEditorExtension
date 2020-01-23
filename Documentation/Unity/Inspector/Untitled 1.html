@@ -1,0 +1,821 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>自定义扩展编辑器</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="39734ce6-9869-4b53-be8e-b842780155c9" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🛠</span></div><h1 class="page-title">自定义扩展编辑器</h1></header><div class="page-body"><h1 id="a23b1755-27d4-4920-a206-70cbf1c20f78" class="">自定义 GUI 布局、样式</h1><p id="1c47c73e-6548-4651-a883-377e4a53d2cc" class=""><code>EditorGUILayout</code> 和 <code>EditorGUI</code> 提供给开发者极大的自定义编辑器的空间。通过实例化 <code>GUIContent</code> <code>GUILayout</code> <code>GUIStyle</code> 等类并以参数的形式传递给相关的静态函数，开发者就可以自定义编辑器中 GUI 组件的布局和显示样式。</p><blockquote id="d6b97289-1179-4ed2-ae18-6c8a177756dd" class="block-color-gray"><code>GUILayout</code> 可用于定义指定布局方式的 <code>GUILayoutOption</code> 参数列表。</blockquote><p id="27f4f0c0-4fcd-4053-b542-6f515aed7813" class="">以下是上述三个类的详细用法：</p><div id="d34b601c-550c-4247-b6ca-9270bb6ef65a" class="collection-content"><h4 class="collection-title">GUIContent</h4><table class="collection-content"><thead><tr><th>说明</th><th>类型</th><th>使用方法</th></tr></thead><tbody><tr id="58f4641f-f241-4e74-b4df-26a2dda54b22"><td class="cell-title"><a href="Untitled%201/GUIContent/Untitled.html">快速生成一个空内容</a></td><td class="cell-OnUv"><span class="selected-value">静态属性</span></td><td class="cell-ceU`"><code>none</code></td></tr><tr id="5667ca64-08a5-412e-8082-2fa6da7657aa"><td class="cell-title"><a href="Untitled%201/GUIContent/Untitled%201.html">图标</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>image</code></td></tr><tr id="dc2ba776-aa2b-48d1-98d6-4bd1a8785bbe"><td class="cell-title"><a href="Untitled%201/GUIContent/Untitled%202.html">文本内容</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>text</code></td></tr><tr id="924cde33-b370-44d7-8d43-6d070b9a2491"><td class="cell-title"><a href="Untitled%201/GUIContent/Untitled%203.html">提示内容</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>tooltip</code></td></tr><tr id="06a6005f-810d-4e48-810a-368ff2414764"><td class="cell-title"><a href="Untitled%201/GUIContent/Untitled%204.html">生成一个空内容的构造函数</a></td><td class="cell-OnUv"><span class="selected-value">构造函数</span></td><td class="cell-ceU`"><code>GUIContent</code></td></tr></tbody></table></div><div id="1ae9c224-36a2-4cc5-8f82-4a120402e825" class="collection-content"><h4 class="collection-title">GUILayout</h4><table class="collection-content"><thead><tr><th>说明</th><th>类型</th><th>使用方法</th></tr></thead><tbody><tr id="4eba481f-72d2-4bb7-90f2-0690e4060d98"><td class="cell-title"><a href="Untitled%201/GUILayout/Untitled.html">定义绝对宽度、绝对高度</a></td><td class="cell-OnUv"><span class="selected-value">静态函数</span></td><td class="cell-ceU`"><code>Width</code> <code>Height</code></td></tr><tr id="1471661d-59f1-47d8-b53b-fc04c374dcb2"><td class="cell-title"><a href="Untitled%201/GUILayout/Untitled%201.html">定义最大宽度、最大高度</a></td><td class="cell-OnUv"><span class="selected-value">静态函数</span></td><td class="cell-ceU`"><code>MaxWidth</code> <code>MaxHeight</code></td></tr><tr id="31229770-3d23-43c1-a027-de115bec0faf"><td class="cell-title"><a href="Untitled%201/GUILayout/Untitled%202.html">定义最小宽度、最小高度</a></td><td class="cell-OnUv"><span class="selected-value">静态函数</span></td><td class="cell-ceU`"><code>MinWidth</code> <code>MingHeight</code></td></tr><tr id="e6968878-f609-4246-a2c1-b5d042eb4837"><td class="cell-title"><a href="Untitled%201/GUILayout/Untitled%203.html">定义是否允许水平、垂直伸长</a></td><td class="cell-OnUv"><span class="selected-value">静态函数</span></td><td class="cell-ceU`"><code>ExpandWidth</code> <code>ExpandWidth</code></td></tr></tbody></table></div><div id="cf7b0db4-fc4d-4820-b750-b8026e4874e8" class="collection-content"><h4 class="collection-title"> GUIStyle</h4><table class="collection-content"><thead><tr><th>说明</th><th>类型</th><th>使用方法</th></tr></thead><tbody><tr id="b28ef51f-bbc4-43cb-8849-3872c9f1d110"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled.html">快速生成一个空样式</a></td><td class="cell-OnUv"><span class="selected-value">静态属性</span></td><td class="cell-ceU`"><code>none</code></td></tr><tr id="7ed51b1c-9bee-4a4b-8c47-3582fc93de47"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%201.html">当控制区域被鼠标点击/键盘聚焦/鼠标悬停/正常显示时的渲染样式</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>active</code> <code>focused</code> <code>hover</code> <code>normal</code></td></tr><tr id="64caec65-1ea2-436c-953d-e05166d53d4a"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%202.html">文本的对齐方式</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>alignment</code></td></tr><tr id="84bc7bf7-f386-4343-8aa5-07df442825b3"><td class="cell-title"><a href="Untitled%201/GUIStyle/GUI.html">边框/GUI 元素间的空隙/从边界到显示内容之间的空白</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>border</code> <code>margin</code> <code>padding</code></td></tr><tr id="1b781030-ca92-4820-a6d1-d1bb5c1e2ddf"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%203.html">当显示内容超出给定区域时的处理方式</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>clipping</code></td></tr><tr id="3cac1f1f-18c5-4442-8260-e1c1450ef4eb"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%204.html">显示位置的偏移</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>contentOffset</code></td></tr><tr id="355d443e-0376-4609-96ca-f3ef235cdd87"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%205.html">固定的宽/高</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>fixedHeight</code> <code>fixedWidth</code></td></tr><tr id="ca4b7d60-0f94-4acf-b9bb-e9f99b26f3b5"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%206.html">字体/大小/样式</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>font</code> <code>fontSize</code> <code>fontStyle</code></td></tr><tr id="44c5f2a8-7dac-4b51-aa07-ea200a186c1e"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%207.html">图片和文本的组合方式</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>imagePosition</code></td></tr><tr id="9ec62fc8-495b-49ea-b792-6d42797429a9"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%208.html">行距（只读）</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>lineHeight</code></td></tr><tr id="db51476a-aebc-47a5-b300-861ccfe1717d"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%209.html">Untitled</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>onActive</code> <code>onFocused</code> <code>onHover</code> <code>onNormal</code></td></tr><tr id="5e524095-c01d-454f-a3dd-4d916fbf02aa"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%2010.html">加在背景图片上的多余空间</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>overflow</code></td></tr><tr id="97978f50-8160-44c8-b1eb-47fb21ac907d"><td class="cell-title"><a href="Untitled%201/GUIStyle/HTML.html">是否允许 HTML 标签的文本格式</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>richText</code></td></tr><tr id="51ad7233-e74e-4f49-9d6b-355323995dfd"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%2011.html">是否允许水平/垂直方向上拉伸</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>stretchWidth</code> <code>stretchHeight</code></td></tr><tr id="f213ece4-fcd9-4a84-a801-d8ae915729f3"><td class="cell-title"><a href="Untitled%201/GUIStyle/Untitled%2012.html"> 文本是否自动换行</a></td><td class="cell-OnUv"><span class="selected-value">属性</span></td><td class="cell-ceU`"><code>wordWrap</code></td></tr></tbody></table></div><h1 id="8a170d1c-50c2-4fd8-85c2-0a5b84289eeb" class="">自定义属性绘制器</h1><p id="8c2978d4-192d-4c4f-88cc-078e2825acdb" class="">当 Unity 内置的绘制器不能达到要求时，开发者也可以创建自定义绘制器。这里以创建一个自动将 <code>Rotation</code> 转换为 <code>Quaternion</code> 的属性绘制器为例。</p><p id="5c04e872-0a0e-47df-81b6-7d4b2514b275" class="">首先需要定义该属性绘制器对应的属性 <code>QuatConvAttribute</code> ，定义在 <code>Tools/CustomProperties/Scripts/QuatConvAttribute.cs</code> 中：</p><pre id="67dd26bc-0376-450b-b225-fe15dba7ffda" class="code"><code>using UnityEngine;
+
+namespace InspectorExtension.CustomProperties {
+		public class QuatConvAttribute : PropertyAttribute {
+				bool _rad;
+		
+				public bool Rad {
+						get { return _rad; }
+				}
+		
+				public QuatConvAttribute (bool rad = false) {
+						_rad = rad;
+				}
+		}
+}</code></pre><p id="e2d18b06-5a7e-4110-a0f6-eeab30862139" class="">这里定义了属性的名称、调用方法等。其中包含一个可选参数 <code>_rad</code> 表示使用对象是否为弧度制。</p><p id="7be2d391-5d3a-4899-a4ca-1a9f0ae03765" class="">然后需要在 <code>Tools/CustomProperties/Editor/QuatConvDrawer.cs</code> 中具体实现其绘制方法：</p><pre id="fc00dd22-76d3-438e-82ef-a2c22bf3e7bd" class="code"><code>using UnityEngine;
+using UnityEditor;
+
+namespace InspectorExtension.CustomProperties {
+		[CustomPropertyDrawer (typeof (QuatConvAttribute))]
+		public class QuatConvDrawer : PropertyDrawer {
+		
+				public override float GetPropertyHeight (SerializedProperty property, GUIContent label) {
+						return EditorGUI.GetPropertyHeight (property) * 2;
+				}
+		
+				public override void OnGUI (Rect position, SerializedProperty property, GUIContent label) {
+						if (property.propertyType == SerializedPropertyType.Vector3) {
+								property.vector3Value = EditorGUI.Vector3Field (
+										new Rect (position.x, position.y, position.width, position.height / 2),
+										label,
+										property.vector3Value
+								);
+			
+								Quaternion quaternion = ConvertQuaternion (property.vector3Value, (attribute as QuatConvAttribute).Rad);
+								EditorGUI.SelectableLabel (
+										new Rect (position.x, position.y + position.height / 2, position.width, position.height / 2),
+										string.Format(
+												&quot;Quaternion Converted: (x: {0}, y: {1}, z: {2}, w: {3})&quot;,
+												quaternion.x,
+												quaternion.y,
+												quaternion.z,
+												quaternion.w
+										),
+										&quot;label&quot;
+								);
+						} else {
+								EditorGUI.HelpBox (
+									position,
+									&quot;Cannot use attribute [QuatConv] on type &quot; + property.propertyType.ToString () + &quot;.&quot;,
+									MessageType.Error
+								);
+						}
+				}
+		
+				Quaternion ConvertQuaternion (Vector3 rotation, bool useRad) {
+						if (!useRad) {
+								return Quaternion.Euler (rotation);
+						} else {
+								return Quaternion.Euler (
+										Mathf.Rad2Deg * rotation.x,
+										Mathf.Rad2Deg * rotation.y,
+										Mathf.Rad2Deg * rotation.z
+								);
+						}
+				}
+		}
+}</code></pre><p id="da29b1d0-a637-44af-b94d-9b03da6452a1" class="">最后要设置 <code>QuatConv</code> 的使用对象，在 <code>Scripts/CustomProperties/QuatConvert.cs</code> 中创建实例：</p><pre id="de4c99ca-5928-4cb0-80ec-1b3200de1f79" class="code"><code>using UnityEngine;
+using InspectorExtension.CustomProperties;
+
+public class QuatConvert : MonoBehaviour {
+		[QuatConv]
+		public Vector3 _rotationDeg;
+		
+		[QuatConv (true)]
+		public Vector3 _rotationRad;
+	
+		[QuatConv]
+		public Vector2 _no;
+}</code></pre><p id="91c482dc-726e-4581-941b-ae7bae4aec47" class="">将该脚本拖到某个物体上，编译后 inspector 面板如下：</p><figure id="244184c2-da50-49ef-a270-31f22516e7d9" class="image"><a href="Untitled%201/2018-12-171.53.43.png"><img style="width:480px" src="Untitled%201/2018-12-171.53.43.png"/></a></figure><h1 id="72e3305d-5c2f-40aa-9a1d-ce0c4ef42507" class="">自定义装饰绘制器</h1><p id="e7bc6444-c7d2-4b1f-aded-73babc13b5d2" class="">自定义装饰绘制器的步骤和属性绘制器基本一致，只是绘制器继承于 <code>DecoratorDrawer</code> 即可。 <code>DecoratorDrawer</code> 的 <code>OnGUI</code> 方法只包含绘制位置 <code>position</code> 一个参数，从中可以看出两种绘制器的不同。这里以创建一个绘制分割线的装饰绘制器为例。</p><p id="0a2b459d-224c-432a-bb20-de8badd9aaa7" class="">在 <code>Tools/CustomProperties/Scripts/LineAttribute.cs</code> 中定义属性 <code>LineAttribute</code> ，包括属性名称、调用方法和可能涉及到的绘制参数（例如绘制分割线的长宽和对齐方式等）：</p><pre id="745a5f21-db0e-406d-9263-32089b5d5170" class="code"><code>using System;
+using UnityEngine;
+
+namespace InspectorExtension.CustomProperties {
+		[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+		public class LineAttribute : PropertyAttribute {
+				bool _expanded = true;
+		
+				float _width = 100.0f;
+				float _height = 2.0f;
+				int _alignment = 0;
+		
+				public bool Expanded {
+						get { return _expanded; }
+				}
+		
+				public float Width {
+						get { return _width; }
+				}
+		
+				public float Height {
+						get { return _height; }
+				}
+		
+				public int Alignment {
+						get { return _alignment; }
+				}
+		
+				public LineAttribute (bool expanded = true, float height = 1.0f) {
+						_expanded = expanded;
+			
+						_height = height;
+				}
+		
+				public LineAttribute (float width, float height = 1.0f, int alignment = 0) {
+						_expanded = false;
+			
+						_width = width;
+						_height = height;
+						_alignment = alignment;
+				}
+		}
+}</code></pre><p id="f54adba4-96b2-4a35-bdad-52cbe5d38698" class="">然后在 <code>Tools/CustomProperties/Editor/LineDrawer.cs</code> 中具体实现其绘制方法：</p><pre id="950ac902-52c4-45c6-b971-b7e2ae503b03" class="code"><code>using UnityEngine;
+using UnityEditor;
+
+namespace InspectorExtension.CustomProperties {
+		[CustomPropertyDrawer (typeof (LineAttribute))]
+		public class LineDrawer : DecoratorDrawer {
+				LineAttribute lineAttribute;
+		
+				public override float GetHeight () {
+						return (attribute as LineAttribute).Height + 2.0f;
+				}
+		
+				public override bool CanCacheInspectorGUI () {
+						return false;
+				}
+		
+				public override void OnGUI (Rect position) {
+						lineAttribute = attribute as LineAttribute;
+						if (lineAttribute.Expanded) {
+								EditorGUI.DrawRect (
+									new Rect (position.x, position.y, position.width, lineAttribute.Height),
+									Color.black
+								);
+						} else {
+								switch (lineAttribute.Alignment) {
+								case 0:
+										EditorGUI.DrawRect (
+												new Rect (position.x, position.y, lineAttribute.Width, 1),
+												Color.black
+										);
+										break;
+								case 1:
+										EditorGUI.DrawRect (
+												new Rect (position.x + position.width - lineAttribute.Width, position.y, lineAttribute.Width, lineAttribute.Height),
+												Color.black
+										);
+										break;
+								case 2:
+										EditorGUI.DrawRect (
+											new Rect (position.x + position.width / 2 - lineAttribute.Width / 2, position.y, lineAttribute.Width, lineAttribute.Height),
+											Color.black
+										);
+										break;
+								}
+						}
+				}
+		}
+}</code></pre><p id="01c84d7c-cb32-4a8a-8b3f-a3ac046a8138" class="">最后要设置 <code>Line</code> 的使用对象，在 <code>Scripts/CustomProperties/Line.cs</code> 中创建实例：</p><pre id="ca7c1083-eab9-47e9-b67d-531418a454e4" class="code"><code>using UnityEngine;
+using InspectorExtension.CustomProperties;
+
+public class Line : MonoBehaviour {
+		[Header(&quot;Group One&quot;)]
+		[Line (true, 1.5f)]
+		public int _int_1;
+	
+		[Line (150.0f, 1.0f, 0)]
+		public float _float_1;
+	
+		[Line (150.0f, 1.0f, 0)]
+		public double _double_1;
+	
+		[Header (&quot;Group Two&quot;)]
+		[Line (true, 1.5f)]
+		public int _int_2;
+	
+		[Line (150.0f, 1.0f, 1)]
+		public float _float_2;
+	
+		[Line (150.0f, 1.0f, 1)]
+		public double _double_2;
+	
+		[Header (&quot;Group Three&quot;)]
+		[Line (true, 1.5f)]
+		public int _int_3;
+	
+		[Line (150.0f, 1.0f, 2)]
+		public float _float_3;
+	
+		[Line (150.0f, 1.0f, 2)]
+		public double _double_3;
+}</code></pre><p id="eeedccaf-5ede-459d-a54f-80d4af65105e" class="">将该脚本拖到某个物体上，编译后 inspector 面板如下：</p><figure id="1e290af5-af2f-4ba7-b59b-a4ac1175b5d8" class="image"><a href="Untitled%201/2018-12-173.58.45.png"><img style="width:480px" src="Untitled%201/2018-12-173.58.45.png"/></a></figure><p id="ac629377-7874-4195-98fa-b92e2107a8f6" class="">自定义绘制器需要注意以下几点：</p><ol id="0352c2ab-7f46-4d15-a4bb-c51349510f18" class="numbered-list" start="1"><li>绘制器不支持 GUI 自动布局，所以在绘制过程中只可以使用 <code>EditorGUI</code> 和 <code>GUI</code> 类，并需要将绘制控件的具体位置以参数的形式传入。</li></ol><ol id="2360ede3-b773-4d55-a469-f8f17e0c52f4" class="numbered-list" start="2"><li>虽然不是必要要求，但一般习惯于将对应的属性命名为 <code>XXXAttribute</code> 。具体将属性和对应的绘制器绑定起来的工作是由 Unity 内置的属性 <code>CustomPropertyDrawer</code> 完成的，只需将对应的属性的类型（如 <code>QuatConvAttribute</code> 和 <code>LineAttribute</code> ）传入即可。</li></ol><ol id="58d10149-8298-4579-a644-1eb6c2553584" class="numbered-list" start="3"><li>除了绘制函数 <code>OnGUI</code> 外，绘制器类中一般还需要手动重新实现 <code>GetPropertyHeight</code> ，用以返回绘制包含该属性的变量所需区域的高度，装饰绘制器中的 <code>GetHeight</code> 则是返回绘制装饰部分的高度。例如， <code>QuatConvAttribute</code> 中返回一般区域的两倍高度以绘制三位旋转和新增的 Quaternion， <code>LineAttribute</code> 中返回的是用户设定的分割线的高度外加两个像素。</li></ol><h1 id="eb2b138f-41f7-4fb0-b8d4-71cbe60ea0a3" class="">在自定义 Inspector 中使用绘制器</h1><p id="2a2d1a3c-3303-4eb1-b68f-3d8adc7dec62" class="">上述的自定义绘制器和 Unity 内置绘制器，以 <code>Attribute</code> 的形式用在可以序列化的变量上，此时变量对应的控件都是以固定的方式绘制的（由绘制器绘制函数确定或者由 Unity 内置确定）。如果想在重新自定义 Inspector 面板时同时使用绘制器，则需要通过类 <code>SerializedObject</code> 和 <code>SerializedProperty</code> 以及控件 <code>PropertyField</code> 来实现。</p><p id="da8650ff-0ae9-426d-a819-360165d81ebf" class="">以自定义控制器 <code>QuatConv</code> 为例，现意图将转换后的 Quaternion 内容以新的方式绘制。在假设不知道或者不关心转换的具体算法的情况下，需要通过代码获取默认绘制的 Quaternion 内容。首先我们依据先前自定义 Inspector 面板部分的方法将其余部分绘制在 <code>Tools/CustomProperties/Editor/QuatConvInspector.cs</code> 中：</p><pre id="a217d25b-8caa-4331-b7bf-0aeb0c00c55b" class="code"><code>using UnityEditor;
+
+namespace InspectorExtension.CustomProperties {
+		[CustomEditor (typeof (QuatConvertWithInspector))]
+		public class QuatConvInspector : Editor {
+				QuatConvertWithInspector _target;
+		
+				bool _showDeg, _showRad;
+		
+				private void OnEnable () {
+						_target = (QuatConvertWithInspector)target;
+				}
+		
+				public override void OnInspectorGUI () {
+						_showDeg = EditorGUILayout.Foldout (_showDeg, &quot;Rotation in Degree&quot;, true);
+						EditorGUILayout.BeginVertical (&quot;box&quot;);
+						if (_showDeg) {
+								// TODO: draw property _rotationDeg here
+						}
+						EditorGUILayout.LabelField (
+								string.Format(
+										&quot;Value: ( X: {0}, Y: {1}, Z: {2} )&quot;,
+										_target.RotationDeg.x,
+										_target.RotationDeg.y,
+										_target.RotationDeg.z
+								)
+						);
+						EditorGUILayout.EndVertical ();
+			
+						_showRad = EditorGUILayout.Foldout (_showRad, &quot;Rotation Rad&quot;, true);
+						EditorGUILayout.BeginVertical (&quot;box&quot;);
+						if (_showRad) {
+								// TODO: draw property _rotationRad here
+						}
+						EditorGUILayout.LabelField (
+								string.Format (
+										&quot;Value: ( X: {0}, Y: {1}, Z: {2} )&quot;,
+										_target.RotationRad.x,
+										_target.RotationRad.y,
+										_target.RotationRad.z
+								)
+						);
+						EditorGUILayout.EndVertical ();
+				}
+		}
+}</code></pre><p id="f80afb90-d412-4d0b-8e5d-035139f67664" class="">结果如下：</p><figure id="eee2b798-8be7-4e24-b016-ed4db7a5c0b3" class="image"><a href="Untitled%201/2018-12-176.08.56.png"><img style="width:480px" src="Untitled%201/2018-12-176.08.56.png"/></a></figure><p id="6e407ace-a8ac-4cd0-9853-28331480c7c9" class="">为获取包含有绘制器的属性，首先需要声明三个新的变量</p><pre id="4b33f0ce-3785-4cc4-892a-7e5547db0b53" class="code"><code>SerializedObject _object;
+SerializedProperty _rotationDeg, _rotationRad;</code></pre><p id="92e39e4d-c922-4672-ac94-4d017530f676" class="">然后在初始化时设置其值：</p><pre id="db035c33-cc63-4fcf-9463-34a90acc67c4" class="code"><code>_object = new SerializedObject (_target);
+_rotationDeg = _object.FindProperty (&quot;_rotationDeg&quot;);
+_rotationRad = _object.FindProperty (&quot;_rotationRad&quot;);</code></pre><p id="d13e723b-17c1-49c5-83c7-b3db8fe848c0" class="">之后即可在绘制过程中访问，并通过 <code>PropertyField</code> 绘制出来：</p><pre id="63363662-41c3-43c1-88c0-4002f863a16a" class="code"><code>// TODO: draw property _rotationDeg here
+EditorGUILayout.PropertyField (_rotationDeg, true);
+_target.RotationDeg = _rotationDeg.vector3Value;
+
+// ...
+
+// TODO: draw property _rotationRad here
+EditorGUILayout.PropertyField (_rotationRad, true);
+_target.RotationRad = _rotationRad.vector3Value;</code></pre><p id="830ad3c9-a4ec-416a-ab79-72981df8cb5a" class="">新的 Inspector 面板如下：</p><figure id="d7419796-d90f-433a-88e0-53c6a8afcf0c" class="image"><a href="Untitled%201/2018-12-176.14.06.png"><img style="width:480px" src="Untitled%201/2018-12-176.14.06.png"/></a></figure></div></article></body></html>

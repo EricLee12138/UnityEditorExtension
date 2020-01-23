@@ -1,0 +1,618 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>编辑器控件自适应</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="4113d3c3-2586-476e-abff-eddb42b19fe1" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🏈</span></div><h1 class="page-title">编辑器控件自适应</h1></header><div class="page-body"><p id="181ba660-cf02-429b-92ae-9b3746fa64ee" class="">之前已经尝试分析 <code>EditorGUILayout</code> 和 <code>EditorGUI</code> 两个类的区别和适用情况。但在实际代码中可以发现几个问题：</p><ul id="99195efe-cc73-42f3-9bc5-10425e6fc61f" class="bulleted-list"><li><code>EditorGUI</code> 理论上适用于编辑器窗口的扩展，因为开发者可以通过一个 <code>Rect</code> 参数来定义控件的位置和长宽，灵活度很高。而事实证明，<code>EditorGUI</code> 确实可以基本胜任编辑器窗口的扩展，但是随着布局的多变，代码实现已经变得很复杂。例如在 Prefab Center 中为了生成一个网格状的显示样式，每次绘制都要进行以下计算：<pre id="eb8b2c06-687c-4c87-8ecf-d48dc8926158" class="code"><code>var buttonWidth = (position.width - 25) / 4;
+var buttonHeight = buttonWidth + 15;
+
+// ...
+
+foreach (var item in _prefabItems) {
+		// ...
+    var buttonLeft = 5 + (i % 4) * (buttonWidth + 5);
+    var buttonTop = 27 + (i / 4) * (buttonHeight + 5);
+}</code></pre></li></ul><ul id="90a368f4-db91-4d1c-8c21-b85da156d84b" class="bulleted-list"><li>尝试后可以发现，<code>EditorGUILayout</code> 在编辑器窗口中也是有效的，并且可以生成自动布局的控件，也非常适用于编辑器窗口的扩展。</li></ul><ul id="ea58dceb-790c-45b5-8a77-337f2aea4b9c" class="bulleted-list"><li>代码中已经多次出现过 <code>GUILayout</code> 和 <code>GUI</code> 类的使用。</li></ul><h1 id="1b4e4b4e-e4b5-4805-926b-c527880d1214" class="">如何自适应</h1><p id="8709c631-5dd0-4c95-8032-27cf7976193b" class="">通过 Unity 提供的内部方法或者开发者自行实现，控件的自适应可以有很多种实现方式。以如何扩展出网格样式为例：</p><ul id="5dcfb6c1-f2a0-441a-b791-8413c180c4d6" class="bulleted-list"><li>手动实现<pre id="c8f20b6d-b0da-43fa-8255-65cf49067913" class="code"><code>private void DrawGridWithRawScripts () {
+		DrawControls ();
+	
+		float buttonWidth = (position.width - 5) / _column - 5;
+		float buttonHeight = (position.height - 53) / _row - 5;
+	
+		for (int i = 0; i &lt; _row; i++) {
+				float buttonTop = 53 + (i % _row) * (buttonHeight + 5);
+				for (int j = 0; j &lt; _column; j++) {
+						float buttonLeft = 5 + (j % _column) * (buttonWidth + 5);
+						GUI.Button (new Rect (buttonLeft, buttonTop, buttonWidth, buttonHeight), string.Format (&quot;Button {0}-{1}&quot;, i, j));
+				}
+		}
+}</code></pre><pre id="45c93d5b-b888-47d8-8486-4209b0ac2422" class="code"><code>private void DrawControls () {
+		GUI.BeginGroup (new Rect (5, 5, position.width - 10, 43), GUIContent.none, &quot;box&quot;);
+	
+		_row = EditorGUI.IntSlider (new Rect (3, 3, position.width - 16, 17), &quot;row&quot;, _row, 0, 30);
+		_column = EditorGUI.IntSlider (new Rect (3, 23, position.width - 16, 17), &quot;column&quot;, _column, 0, 30);
+	
+		GUI.EndGroup ();
+}</code></pre></li></ul><figure id="66bbe758-7b07-4cdc-ae75-3f4782825973" class="image"><a href="Untitled%202/2019-01-074.39.46.png"><img style="width:480px" src="Untitled%202/2019-01-074.39.46.png"/></a></figure><ul id="e34d24bb-0679-49f2-bf28-c1d92c27cbb7" class="bulleted-list"><li>自动布局的 <code>GUILayout</code> 或 <code>EditorGUILayout</code><pre id="e04987f8-6c7d-4d77-a687-a694f415f1f9" class="code"><code>private void DrawGridWithGuiLayout () {
+		_row = EditorGUILayout.IntSlider (&quot;row&quot;, _row, 0, 30);
+		_column = EditorGUILayout.IntSlider (&quot;column&quot;, _column, 0, 30);
+	
+		for (int i = 0; i &lt; _row; i++) {
+				GUILayout.BeginHorizontal ();
+				for (int j = 0; j &lt; _column; j++) {
+						GUILayout.Button (string.Format (&quot;Button {0}-{1}&quot;, i, j));
+				}
+				GUILayout.EndHorizontal ();
+		}
+}</code></pre></li></ul><figure id="e6b20261-f779-4e01-9b58-e444bb04361d" class="image"><a href="Untitled%202/2019-01-074.57.13.png"><img style="width:480px" src="Untitled%202/2019-01-074.57.13.png"/></a></figure><ul id="c13a7b76-7cfd-4ab9-b07d-2c1d93dec1b4" class="bulleted-list"><li><code>SelectionGrid</code><pre id="7cd80e81-93c0-4970-b7de-51a9e631b153" class="code"><code>private void DrawGridWithSelectionGrid () {
+		_row = EditorGUILayout.IntSlider (&quot;row&quot;, _row, 0, 30);
+		_column = EditorGUILayout.IntSlider (&quot;column&quot;, _column, 0, 30);
+	
+		List&lt;string&gt; contents = new List&lt;string&gt; ();
+	
+		for (int i = 0; i &lt; _row; i++) {
+				for (int j = 0; j &lt; _column; j++) {
+						contents.Add (string.Format (&quot;Button {0}-{1}&quot;, i, j));
+				}
+		}
+	
+		GUILayout.SelectionGrid (-1, contents.ToArray (), _column);
+}</code></pre></li></ul><figure id="cba656a5-13bc-4b05-ad0f-e4df987f0c9e" class="image"><a href="Untitled%202/2019-01-074.57.13.png"><img style="width:480px" src="Untitled%202/2019-01-074.57.13.png"/></a></figure><p id="299683e2-3264-419f-b010-0081aa4ee1cc" class="">上述实现方法各有特点：</p><p id="da646c58-fd1f-4a94-93d9-ccee31d839d0" class=""><strong>手动实现</strong>利用了 <code>EditorGUI</code> 和 <code>GUI</code> 类的灵活性，只要计算好网格中每个按钮的具体位置，然后传入对应的方法中，就可以实现各种样式。但是布局和样式有可能多变而且不具规律性，所以需要考虑并计算多种情况下的位置和尺寸，往往会导致代码规模变大，而且各种数字使得代码的可读性和可维护性变差。</p><blockquote id="c76b837e-f144-47b2-8211-15b4cbfe8eeb" class="block-color-gray">为了提高手动实现的效率和代码的质量，可以考虑维护一些全局的变量和方法，自动计算下一个控件的位置和尺寸。个人认为自动布局的 <code>GUILayout</code> 类就是这么处理的。</blockquote><p id="045332b4-d79c-4671-bc2d-119984a56a4e" class=""><strong><code>EditorGUILayout</code></strong><strong> 和 </strong><strong><code>GUILayout</code></strong> 则是已经计算好了各个按钮的位置和尺寸，只需代码简单定义绘制的样式即可。可以看出，<code>EditorGUILayout</code> 和 <code>GUILayout</code> 默认是不会在垂直方向上填充整个窗口的，每个按钮都有固定的高度（除非通过代码明确修改其高度）。另外，按钮还有一个固定的最小宽度，一般会保证内部的文本都可以显示，如果窗口过于窄，部分按钮就会被截断。</p><figure id="1d6e4d26-1cce-461e-8758-176d4292c743" class="image"><a href="Untitled%202/2019-01-074.56.41.png"><img style="width:480px" src="Untitled%202/2019-01-074.56.41.png"/></a></figure><p id="8f7e5786-b2c0-46fd-a76e-996129224950" class=""><strong><code>SelectionGrid</code></strong> 则是已经封装好的专门绘制网格的方法，最少只需要传入两个参数：显示在按钮中的 <code>GUIContent</code> 数组，和网格中每一行显示多少个按钮。<code>SelectionGrid</code> 生成的窗口效果和 <code>GUILayout</code> 一样，只是不具有固定的最小宽度，会讲所有按钮都显示在窗口中，即使文本有所扭曲。</p><figure id="8ae2f8d2-96c6-4abb-87aa-7ae5198c9d6f" class="image"><a href="Untitled%202/2019-01-075.01.57.png"><img style="width:480px" src="Untitled%202/2019-01-075.01.57.png"/></a></figure><h1 id="47b3e092-1baa-4ef0-9602-d3d7a9b69b87" class="">如何选择</h1><p id="a9cb7613-d258-4564-915c-53c2923d9e29" class="">以往的例子中，<code>EditorGUILayout</code> 和 <code>EditorGUI</code>，<code>GUILayout</code> 和 <code>GUI</code> 交替出现，究竟是否存在一个明确的取舍，即什么时候选用哪个类更合适。笔者认为这是一个误区，从开发工具的角度上说，更应该从需求的角度思考，也就是只要可以达成目标，没有必要说必须使用哪一个类，开发者可以进行各种尝试，然后按照需要选择一个最合适的。</p><p id="21d5e76e-a9e8-4bd9-b214-386b3583222b" class="">不过根据名字和经验，我们可以得出一些大致上的结论：</p><ul id="9338d689-8148-4e91-bd90-77fdf1aeb700" class="bulleted-list"><li> <code>XXXLayout</code> 更适用于自动布局的情况，开发小工具时使用比较合适。</li></ul><ul id="458484fb-c84f-4736-8460-c81027b90e2f" class="bulleted-list"><li> <code>EditorXXX</code> 适用于编辑器的扩展，而 <code>GUILayout</code> 和 <code>GUI</code> 不仅可以扩展编辑器，还可以用于扩展 Scene View 等非编辑器的情况。</li></ul><ul id="5363b130-a59d-49a5-8234-29f0230a92c7" class="bulleted-list"><li><code>GUI</code> 包含的方法更全、更底层。</li></ul></div></article></body></html>
